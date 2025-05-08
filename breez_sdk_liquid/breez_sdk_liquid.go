@@ -34,32 +34,32 @@ func RustBufferFromExternal(b RustBufferI) RustBuffer {
 	}
 }
 
-func (cb RustBuffer) Capacity() int {
+func RustBufferCapacity(cb RustBuffer) int {
 	return int(cb.capacity)
 }
 
-func (cb RustBuffer) Len() int {
+func RustBufferLen(cb RustBuffer) int {
 	return int(cb.len)
 }
 
-func (cb RustBuffer) Data() unsafe.Pointer {
+func RustBufferData(cb RustBuffer) unsafe.Pointer {
 	return unsafe.Pointer(cb.data)
 }
 
-func (cb RustBuffer) AsReader() *bytes.Reader {
-	b := unsafe.Slice((*byte)(cb.data), C.int(cb.len))
+func RustBufferAsReader(cb RustBuffer) *bytes.Reader {
+	b := unsafe.Slice((*byte)(cb.data), cb.len)
 	return bytes.NewReader(b)
 }
 
-func (cb RustBuffer) Free() {
+func RustBufferFree(cb RustBuffer) {
 	rustCall(func(status *C.RustCallStatus) bool {
 		C.ffi_breez_sdk_liquid_bindings_rustbuffer_free(cb, status)
 		return false
 	})
 }
 
-func (cb RustBuffer) ToGoBytes() []byte {
-	return C.GoBytes(unsafe.Pointer(cb.data), C.int(cb.len))
+func RustBufferToGoBytes(cb RustBuffer) []byte {
+	return C.GoBytes(unsafe.Pointer(cb.data), cb.len)
 }
 
 func stringToRustBuffer(str string) RustBuffer {
